@@ -1,0 +1,185 @@
+---
+title: "Foodborne Chicago Survey Analysis"
+author: "Cory Nissen"
+date: "12/31/2014"
+output: html_document
+---
+
+```{r, echo=FALSE}
+load("653001_Final_Excel_121914_xlsx.Rdata")
+library(htmlTable)
+```
+
+### Introduction
+Within 7 months of launching [Foodborne Chicago](https://www.foodbornechicago.org/) with the help of the [Smart Chicago Collaborative](http://www.smartchicagocollaborative.org/) and the Chicago Health Department back in April of 2013, we noticed that many of the complaints generated through the system were on the north side of the city, with very few coming from the south side. In November 2013, we created [several maps](https://github.com/corynissen/foodborne_chicago_report_map/commit/b1d0559f265b6a708da3480a8d30e096e609bc63) of the submissions to visualize this phenomenon. The [Knight foundation](http://www.knightfoundation.org/) helped us with funding via their [prototype fund](http://www.knightfoundation.org/blogs/knightblog/2014/1/22/testable-moment-for-media-innovation/) to investigate reasons why this might be. We used some of those funds to run a survey of Chicago residents.  
+
+
+<img src="https://raw.githubusercontent.com/corynissen/foodborne_chicago_report_map/b1d0559f265b6a708da3480a8d30e096e609bc63/foodborne_p4.png", height="500", width="500">
+
+### Survey Set Up  
+The survey was run on Chicago residents that have used [Twitter](http://www.twitter.com) recently. It was administered online by [SSI](http://www.surveysampling.com/) from December 11, 2014 to December 19, 2014. There were 6 screener questions and 16 regular questions on [the survey](https://github.com/corynissen/foodborne_survey/blob/master/foodborne_chicago_final_survey.docx). We were aiming for a good mix of north side and south side residents. We had 91 completed surveys, with 56 on the north side and 35 on the south side. For the purposes of our analysis, north side is defined as north of the line that the northern edge of zip codes 60623, 60608, 60616 create across the city. Zip codes 60623, 60608, 60616 and those to the south are considered south side. Much of the analysis to follow will focus on this somewhat arbitrary line. 
+
+### Profile of respondents 
+
+####Gender  
+```{r echo=FALSE}
+tmp <- ifelse(df$qs4==1, "Male", "Female")
+tab <- round((table(tmp) / sum(table(tmp))*100), 1)
+dft <- data.frame(names(tab), freq=as.numeric(tab), stringsAsFactors=F)
+dft$freq <- paste0(dft$freq, "%")
+htmlTable(dft, rnames=FALSE, header=c("", "&nbsp;Frequency"), align="l r")
+```
+</br>
+  
+####Age  
+```{r echo=FALSE}
+tmp <- table(df$qs3)
+tab <- round((tmp / sum(tmp)*100), 1)
+dft <- data.frame(age=names(tab), freq=as.numeric(tab), stringsAsFactors=F)
+match_tab  <- matrix(c(2, "18-24 years",
+                       3, "25-34 years",
+                       4, "35-44 years",
+                       5, "45-54 years",
+                       6, "55-64 years",
+                       7, "65 and up"), ncol=2, byrow=T)
+dft$age[match(match_tab[,1], dft$age)] <- match_tab[,2]
+dft$freq <- paste0(dft$freq, "%")
+htmlTable(dft, rnames=FALSE, header=c("", "&nbsp;Frequency"), align="l r")
+```
+</br>
+  
+####How often do you check Twitter?  
+```{r echo=FALSE}
+tmp <- table(df$qs6)
+tab <- round((tmp / sum(tmp)*100), 1)
+dft <- data.frame(age=names(tab), freq=as.numeric(tab), stringsAsFactors=F)
+match_tab  <- matrix(c(1, "Daily",
+                       2, "A few times per week",
+                       3, "Once a week",
+                       4, "Every 2-3 weeks"), ncol=2, byrow=T)
+dft$age[match(match_tab[,1], dft$age)] <- match_tab[,2]
+dft$freq <- paste0(dft$freq, "%")
+htmlTable(dft, rnames=FALSE, header=c("", "&nbsp;Frequency"), align="l r")
+```
+</br>
+  
+####What is the primary way that you connect to the Internet?   
+```{r echo=FALSE}
+tmp <- table(df$qs10)
+tab <- round((tmp / sum(tmp)*100), 1)
+dft <- data.frame(age=names(tab), freq=as.numeric(tab), stringsAsFactors=F)
+match_tab  <- matrix(c(1, "Broadband at home (Cable, DSL, etc)",
+                       2, "Phone plan with data included",
+                       3, "Public WiFi"), ncol=2, byrow=T)
+dft$age[match(match_tab[,1], dft$age)] <- match_tab[,2]
+dft$freq <- paste0(dft$freq, "%")
+htmlTable(dft, rnames=FALSE, header=c("", "&nbsp;Frequency"), align="l r")
+```
+</br>
+  
+####Have you ever been a victim of food poisoning?  
+```{r two-column, results='asis', echo=FALSE, out.extra=''}
+library(knitr)
+tmp <- table(df$q1)
+tab <- round((tmp / sum(tmp)*100), 1)
+dft <- data.frame(age=names(tab), freq=as.numeric(tab), stringsAsFactors=F)
+match_tab  <- matrix(c(1, "Yes",
+                       2, "No"), ncol=2, byrow=T)
+dft$age[match(match_tab[,1], dft$age)] <- match_tab[,2]
+dft$freq <- paste0(dft$freq, "%")
+cat('<table><tr>')
+cat("<td>")
+htmlTable(dft, rnames=FALSE, header=c("", "&nbsp;Frequency"), align="l r")
+cat("</td>")
+cat("<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>")
+cat("<td>")
+tab <- apply(round(prop.table(table(df$side, df$q1), 1), 3) * 100, 2, 
+             function(u) sprintf( "%.1f%%", u ))
+htmlTable(tab, header=c("Yes", "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;No&nbsp;&nbsp;&nbsp;"), 
+          align="l r", rnames=c("North&nbsp;&nbsp;", "South&nbsp;&nbsp;"))  
+cat("</td>")
+cat("</tr></table>")
+```
+</br>
+  
+####Have you ever reported a case of food poisoning to the Chicago health department?  
+```{r two-column2, results='asis', echo=FALSE, out.extra=''}
+library(knitr)
+tmp <- table(df$q4)
+tab <- round((tmp / sum(tmp)*100), 1)
+dft <- data.frame(resp=names(tab), freq=as.numeric(tab), stringsAsFactors=F)
+match_tab  <- matrix(c("1", "Yes",
+                       "2", "No",
+                       " ", "NA"), ncol=2, byrow=T)
+dft$resp[match(match_tab[,1], dft$resp)] <- match_tab[,2]
+dft$freq <- paste0(dft$freq, "%")
+cat('<table><tr>')
+cat("<td>")
+htmlTable(dft, rnames=FALSE, header=c("", "&nbsp;Frequency"), align="l r")
+cat("</td>")
+cat("<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>")
+cat("<td>")
+tab <- apply(round(prop.table(table(df$side, df$q4), 1), 3) * 100, 2, 
+             function(u) sprintf( "%.1f%%", u ))
+htmlTable(tab, header=c("NA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Yes", "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;No&nbsp;&nbsp;&nbsp;"), 
+          align="l r", rnames=c("North&nbsp;&nbsp;", "South&nbsp;&nbsp;"))  
+cat("</td>")
+cat("</tr></table>")
+```
+</br>
+  
+####If you were to report a case of food poisoning to the Chicago health department, how confident are you that your report would be followed up on?  
+```{r results='asis', echo=FALSE, out.extra=''}
+library(knitr)
+tmp <- table(df$q8_1)
+tab <- round((tmp / sum(tmp)*100), 1)
+dft <- data.frame(resp=names(tab), freq=as.numeric(tab), stringsAsFactors=F)
+match_tab  <- matrix(c("1", "1 Not at all confident",
+                       "2", "2",
+                       "3", "3",
+                       "4", "4",
+                       "5", "5",
+                       "6", "6",
+                       "7", "7",
+                       "8", "8",
+                       "9", "9",
+                       "10", "10 Extremely confident"), ncol=2, byrow=T)
+dft$resp[match(match_tab[,1], dft$resp)] <- match_tab[,2]
+dft$freq <- paste0(dft$freq, "%")
+htmlTable(dft, rnames=FALSE, header=c("", "&nbsp;Frequency"), align="l r")
+```
+</br>
+  
+####If you were to report a case of food poisoning to the Chicago health department, how confident are you that your report would be followed up on?  
+```{r results='asis', echo=FALSE, out.extra=''}
+library(knitr)
+tmp <- table(df$q9)
+tab <- round((tmp / sum(tmp)*100), 1)
+dft <- data.frame(resp=names(tab), freq=as.numeric(tab), stringsAsFactors=F)
+match_tab  <- matrix(c("1", "Strongly disagree",
+                       "2", "Disagree",
+                       "3", "Neither agree nor disagree",
+                       "4", "Agree",
+                       "5", "Strongly agree"), ncol=2, byrow=T)
+dft$resp[match(match_tab[,1], dft$resp)] <- match_tab[,2]
+dft$freq <- paste0(dft$freq, "%")
+htmlTable(dft, rnames=FALSE, header=c("", "&nbsp;Frequency"), align="l r")
+``` 
+</br>
+  
+####To what extent do you agree or disagree with the following statement: “I am okay with a person or an organization that I do not follow on Twitter replying to a tweet that I send out.”
+```{r results='asis', echo=FALSE, out.extra=''}
+library(knitr)
+tmp <- table(df$q14)
+tab <- round((tmp / sum(tmp)*100), 1)
+dft <- data.frame(resp=names(tab), freq=as.numeric(tab), stringsAsFactors=F)
+match_tab  <- matrix(c("1", "Strongly disagree",
+                       "2", "Disagree",
+                       "3", "Neither agree nor disagree",
+                       "4", "Agree",
+                       "5", "Strongly agree",
+                       "6", "Not sure"), ncol=2, byrow=T)
+dft$resp[match(match_tab[,1], dft$resp, )] <- match_tab[,2]
+dft$freq <- paste0(dft$freq, "%")
+htmlTable(dft, rnames=FALSE, header=c("", "&nbsp;Frequency"), align="l r")
+``` 
