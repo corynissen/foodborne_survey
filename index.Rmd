@@ -150,7 +150,7 @@ htmlTable(dft, rnames=FALSE, header=c("", "&nbsp;Frequency"), align="l r")
 ```
 </br>
   
-####If you were to report a case of food poisoning to the Chicago health department, how confident are you that your report would be followed up on?  
+####To what extent do you agree or disagree with the following statement: “In the event that you or somebody in your family became ill after eating at a restaurant, it is your civic duty to report the illness to the authorities.”  
 ```{r results='asis', echo=FALSE, out.extra=''}
 library(knitr)
 tmp <- table(df$q9)
@@ -183,3 +183,6 @@ dft$resp[match(match_tab[,1], dft$resp, )] <- match_tab[,2]
 dft$freq <- paste0(dft$freq, "%")
 htmlTable(dft, rnames=FALSE, header=c("", "&nbsp;Frequency"), align="l r")
 ``` 
+
+###Raw Data, Survey, and Supporting Documentation  
+The original survey can be found as a docx file [here]("https://github.com/corynissen/foodborne_survey/blob/master/foodborne_chicago_final_survey.docx"). The data file from the survey vendor as a xlsx file is [here]("https://github.com/corynissen/foodborne_survey/blob/master/653001_Final_Excel_121914.xlsx"). I've tidied up the data a bit, created labels, and created an [Rdata file]("https://github.com/corynissen/foodborne_survey/blob/master/653001_Final_Excel_121914_xlsx.Rdata") for further analysis. 
