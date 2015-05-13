@@ -182,7 +182,16 @@ match_tab  <- matrix(c("1", "Strongly disagree",
 dft$resp[match(match_tab[,1], dft$resp, )] <- match_tab[,2]
 dft$freq <- paste0(dft$freq, "%")
 htmlTable(dft, rnames=FALSE, header=c("", "&nbsp;Frequency"), align="l r")
-``` 
+```  
+
+###What does it mean?  
+The purpose of this survey was to explore why there were more food poisoning reports through the [Foodborne Chicago app]("https://www.foodbornechicago.org/") on the north side of the city compared to the south side. We wanted to ensure that we had covered our bases in terms of ensuring that all communities felt comfortable using the application and that the opportunity existed for the entire city to take advantage of our app. The [results from our CUT group]("http://www.smartchicagocollaborative.org/cutgroup-9-foodborne-chicago/") informed design and content changes to our website and form. The CUT group testing suggested that folks were not opposed to us contacting them via twitter, and in some cases inserting ourselves into their rather intimate conversation, with one caveat; we had to be "official". We gained approval from the Chicago Department of Public Health to include their logo on our website. Foodborne Chicago still faces a challenge of engaging community leaders in order to get the word out and become accepted as a trusted member of the various twitter circles that exist in the city. 
+
+41% of the north side residents surveyed had been victim of food poisoning, compared with just 17% of the south side residents. Thus, having more complaints from the north side should not be surprising. Now, exploring the cause of this phenomenon may be worthwhile, but is outside of the scope of this work. Is this a case of mis-diagnosis on the north side or lack of diagnosis on the south side? It could be that since there are more restaurants on the north side, we should expect that more food poisonings occur there. Regardless of the cause, it's important to note that we might expect more reports from the north side given that they seemingly suffer from food poisoning at a higher rate.  
+
+The survey participants did not have an issue with us contacting them through twitter. This aligned with what we heard at the CUT group. Foodborne Chicago, and other twitter API users are experiencing an [issue with collecting tweets]("http://www.smartchicagocollaborative.org/foodborne-chicago-affected-by-twitter-geocoding-issue/") within a given geographical area. It's a known issue on twitter's end, and they are working to fix it. For the time being, our ability to use twitter for public outreach has all but been cut off.  
+
+Next steps will include a community outreach effort to identify ways to interact on social media and be part of the community network. 
 
 ###Raw Data, Survey, and Supporting Documentation  
 The original survey can be found as a docx file [here]("https://github.com/corynissen/foodborne_survey/blob/master/foodborne_chicago_final_survey.docx"). The data file from the survey vendor as a xlsx file is [here]("https://github.com/corynissen/foodborne_survey/blob/master/653001_Final_Excel_121914.xlsx"). I've tidied up the data a bit, created labels, and created an [Rdata file]("https://github.com/corynissen/foodborne_survey/blob/master/653001_Final_Excel_121914_xlsx.Rdata") for further analysis. 
